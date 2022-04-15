@@ -1,0 +1,239 @@
+<html>
+<head><title>Speed Test</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+	body {margin: 0; height: 100%; overflow: hidden}
+	#title
+	{
+		width: 20px;
+		height: 1000px;
+		font-size: 50px;
+	}
+	#write
+	{
+		position: absolute;
+		left:500px;
+		height: 45px;
+	}
+#word
+{
+	display:none;
+	position:absolute;
+	top:50px;
+	left:550px;
+	border:2px solid #F9B5AC;
+	border-radius: 10px;
+	padding: 15px;
+	animation-name: worddiv;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    z-index: 3;
+}
+#score
+{
+	position: absolute;
+	right: 30px;
+	top: 20px;
+	border:3px solid blue;
+	width: 100px;
+	text-align: center;
+	border-radius: 15px;
+	animation-name: changeborder_sc;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    z-index: 3;
+}
+#chance
+{
+	position: absolute;
+	right: 30px;
+	top: 80px;
+	border:3px solid blue;
+	width: 100px;
+	text-align: center;
+	border-radius: 15px;
+	animation-name: changeborder_ch;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    z-index: 3;
+}
+@keyframes worddiv
+{
+	0%   {background-color: #B8D8BA;}
+    25%  {background-color: #EF959D;}
+    50%  {background-color: #F0EECC;}
+    100% {background-color: #B0BCBE;}
+}
+
+@keyframes changeborder_sc
+{
+	0%   {border-color: #2A1F2D;}
+    25%  {border-color: #3B2C35;}
+    50%  {border-color: #5B6C5D;}
+    100% {border-color: #59C9A5;}
+}
+@keyframes changeborder_ch
+{
+	100%   {border-color: #2A1F2D;}
+    0%  {border-color: #3B2C35;}
+    50%  {border-color: #5B6C5D;}
+    25% {border-color: #59C9A5;}
+}
+@keyframes animatedBackground {
+	from { background-position: left bottom; }
+	to { background-position: right bottom; }
+}
+#grass{ 
+	width: 100%; 
+	height: 100%;
+	position: absolute;
+	bottom: 10px; 
+	background-image: url(../images/grass.jpg);
+	background-position: left bottom;
+	background-repeat: repeat-x;
+	opacity: 0.4;
+
+	animation: animatedBackground 4s linear infinite;
+}
+
+</style>
+</head>
+<body>
+<input type="text" id="write" autofocus>
+<div id="title">S<br>P<br>E<br>E<br>D<br>&nbsp;<br>T<br>E<br>S<br>T</div>
+<div id="word">owl</div>
+<div id="score">Score<br>0</div>
+<div id="chance">Chances left <br>3</div>
+<div id="grass"></div>
+<script>
+	arr=["owl","apparition","geocentric","beautiful","scrummy","vast","guilty","corduroy","cauldron","against","amateur","brilliant","jump","burglary","beaver","affect","effect","believable","cosmic","earth"];
+	pos=70;
+	pos1=70;
+	type=document.getElementById("write");
+	word=document.getElementById("word");
+	s=document.getElementById("score");
+	c=document.getElementById("chance");
+	var obj={};
+	score=0;
+	chance=3;
+	obj.score = function()
+	{
+		if(score!=0)
+		{
+			score--;
+
+		}
+		else if(score<=0)
+		{
+			score=0;
+		}
+		s.innerHTML="Score<br>"+score;
+	}
+	obj.chance = function()
+	{
+		chance--;
+		c.innerHTML="Chances left<br>"+chance;	
+			if(chance<=0)
+			{
+				//alert("Game Over");
+				clearInterval(interval);
+				word.style.display="none";
+				type.style.display="none";
+				c.style.display="none";
+				var el=document.createElement("div");
+				document.body.appendChild(el);
+				el.style.backgroundColor="cyan";
+				el.style.position="absolute";
+				el.style.top="250px";
+				el.style.left="500px";
+				el.innerHTML="GAME OVER!!";
+				el.style.border="3px solid #EE7674";
+				el.style.borderRadius="5px";
+				el.style.padding = "10px";
+
+				s.style.backgroundColor="#274156";
+				s.style.color="white"
+				s.style.position="absolute";
+				s.style.top="340px";
+				s.style.left="500px";
+				s.innerHTML="Score<br><br>"+score;
+				s.style.border="4px solid #F9B5AC";
+				s.style.borderRadius="5px";
+				s.style.padding = "10px";
+			}
+
+		
+	}
+	obj.typing = function()
+	{
+		if(event.keyCode==13)//enter
+		{
+			
+			
+			if(type.value==word.innerHTML)
+			{
+				word.innerHTML=obj.getWord();
+				word.style.top=pos1+"px";
+				pos=70;
+				score++;
+				s.innerHTML="Score<br>"+score;
+				//obj.score();
+			}
+			else
+			{
+				obj.score();
+				obj.chance();
+				word.innerHTML=obj.getWord();
+				word.style.top=pos1+"px";
+				pos=70;
+				
+			}
+			type.value="";
+		}
+	}
+	obj.getWord = function()
+	{
+		var x=Math.floor(Math.random()*20);
+		return arr[x];
+	}
+	obj.checkPos = function()
+	{
+		var loc=parseInt(word.style.top);
+		if(loc>=400)
+		{
+			if(score>0)
+				score--;
+			else
+				score=0;
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+	obj.falling = function()
+	{
+		word.style.display="block";
+		y = obj.checkPos();
+		if(y==1)
+		{
+			
+			word.style.top=pos+"px";
+			pos=pos+50;
+		}
+		else if(y==0)
+		{
+			word.innerHTML=obj.getWord();
+			word.style.top=pos1+"px";
+			pos=70;
+			//chance--;
+			obj.chance();
+		}
+	}
+	enter=document.body.addEventListener("keydown",obj.typing,false);
+	interval=setInterval(obj.falling,400);
+	obj.falling();
+</script>
+</body>
+</html>
